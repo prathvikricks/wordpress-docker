@@ -211,6 +211,12 @@ sudo docker exec wordpress_app chown -R www-data:www-data /var/www/html
 echo "Setup complete! Access at http://w.ofgo.in"
 ```
 
+### We need to give proper permission for the proxy_server letsecrypt direc
+##  For that we need execute below command
+```bash
+sudo chown -R ubuntu:ubuntu ./letsencrypt
+sudo chmod -R 755 ./letsencrypt
+```
 
 ### After running docker initially It runs on <ec2-ip>/wp-admin
 
