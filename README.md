@@ -180,35 +180,35 @@ WORDPRESS_SITEURL=http://w.ofgo.in
 ```bash
 #!/bin/bash
 
-# Ensure the script is run from the project root
-dir=$(dirname "$0")
-cd "$dir"
-
 # Create directory structure
-mkdir -p proxy/conf.d wordpress/nginx wordpress/wordpress_data wordpress/mysql_data
+mkdir -p proxy/conf.d wordpress/nginx
+mkdir -p wordpress/wordpress_data wordpress/mysql_data
 
-# Download and extract WordPress
-cd wordpress/wordpress_data
-if [ ! -f wp-settings.php ]; then
+# Download WordPress core
+if [ ! -f wordpress/wordpress_data/wp-settings.php ]; then
     echo "Downloading WordPress..."
-    wget -q https://wordpress.org/latest.tar.gz
-    tar -xzf latest.tar.gz --strip-components=1
-    rm latest.tar.gz
+    wget -q https://wordpress.org/latest.tar.gz -O wordpress/latest.tar.gz
+    tar -xzf wordpress/latest.tar.gz -C wordpress/wordpress_data --strip-components=1
+    rm wordpress/latest.tar.gz
 fi
-cd ../../
 
-# Set permissions
-sudo chmod -R 777 wordpress/wordpress_data
-sudo chmod -R 777 wordpress/mysql_data
+# Set permissions (dev only)
+chmod -R 777 wordpress/wordpress_data
+chmod -R 777 wordpress/mysql_data
 
-# Start Docker containers
+# Start containers
+echo "Starting containers..."
 sudo docker-compose -f wordpress/docker-compose.yml up -d
 sudo docker-compose -f proxy/docker-compose.yml up -d
 
-# Fix ownership inside container
+# Wait for containers to initialize
+sleep 15  # Give containers time to start
+
+# Fix permissions inside container
+echo "Setting file ownership..."
 sudo docker exec wordpress_app chown -R www-data:www-data /var/www/html
 
-echo "Setup complete! Access site at http://wo.ofgo.in"
+echo "Setup complete! Access at http://w.ofgo.in"
 ```
 
 
