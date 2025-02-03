@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  nginx:
+    build: .
+    container_name: proxy_server
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./conf.d:/etc/nginx/conf.d
+      - ./letsencrypt:/etc/letsencrypt  # Persist certificates
+    networks:
+      - wordpress_network
+
+networks:
+  wordpress_network:
+    name: wordpress_network
+    external: true
